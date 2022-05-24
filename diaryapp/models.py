@@ -13,7 +13,7 @@ class Diary(models.Model): # DB Table for 설문조사 주제
     positive = models.FloatField(null=True,blank=True)
     negative = models.FloatField(null=True,blank=True)
     neutral = models.FloatField(null=True,blank=True)
-    advice = models.CharField(max_length = 200)
+    advice = models.CharField(max_length = 200,null=True,blank=True)
 
     def __str__(self):
         return self.title
