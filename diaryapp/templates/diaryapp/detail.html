@@ -22,6 +22,37 @@
     </header>
 
 <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6">
+  <div>
+   <div style = "text-align: center; max-width: 700px; margin: 4rem auto">
+       <h1 style="margin-bottom: 1rem;">
+           {{ target_diary.title }}
+       </h1>
+
+       <p>
+             날짜: {{ target_diary.created_at }}
+       </p>
+       <hr>
+       {% if target_diary.image %}
+       <img src="{{ target_diary.image.url}}", alt=""
+       style="text-align:center; max-width: 100%; border-radius: 1rem; margin-bottom:2rem; object-fit:cover;">
+       {% else %}
+           이미지가 없습니다.
+       {% endif %}
+       <div style="margin-bottom: 2rem; text-align: left;">
+           {{ target_diary.content | safe }}
+       </div>
+       {% if target_diary.writer == request.user %}
+       <a href="{% url 'diaries:update' pk=target_diary.pk %}" class='btn btn-dark rounded-pill col-3'>
+           Edit
+       </a>
+       <a href="#"class='btn btn-danger rounded-pill col-3'>
+           Delete
+       </a>
+       {% endif %}
+       <hr>
+
+   </div>
+  </div>
 
 </div>
 

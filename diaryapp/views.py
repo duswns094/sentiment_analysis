@@ -4,7 +4,9 @@ from django.shortcuts import render
 # Create your views here.
 from django.urls import reverse
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView, DetailView
+from django.views.generic import CreateView, ListView, DetailView, UpdateView
+
+from diaryapp.decorators import diary_ownership_required
 from diaryapp.forms import DiaryCreationForm
 from diaryapp.models import Diary
 
@@ -28,16 +30,34 @@ class DiaryCreateView(CreateView):
             print("실패")
     #
     def get_success_url(self):
-        return reverse('homes:home')
+        return reverse('diaries:list')
 
-
+@method_decorator(login_required(login_url="/accounts/login/"), 'get')
 class DiaryListView(ListView):
     model = Diary
     context_object_name = 'diary_list'
     template_name = 'diaryapp/list.html'
     paginate_by = 21
 
+    def get_context_data(self, **kwargs):
+        object_list = Diary.objects.filter(writer=self.get_object())
+        return super(DiaryListView, self).get_context_data(object_list=object_list)
+
+@method_decorator(login_required(login_url="/accounts/login/"), 'get')
+@method_decorator(diary_ownership_required, 'get')
 class DiaryDetailView(DetailView):
     model = Diary
     context_object_name = 'target_diary'
     template_name = 'diaryapp/detail.html'
+
+
+@method_decorator(diary_ownership_required, 'get')
+@method_decorator(diary_ownership_required, 'post')
+class DiaryUpdateView(UpdateView):
+    model = Diary
+    context_object_name = 'target_diary'
+    form_class = DiaryCreationForm
+    template_name = 'diaryapp/update.html'
+
+    def get_success_url(self):
+        return reverse('diaries:detail', kwargs={'pk':self.object.pk})
