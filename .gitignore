@@ -1,3 +1,5 @@
+# Secret Key
+secrets.json
 
 # BERT Model
 best_kobert_weights.h5
