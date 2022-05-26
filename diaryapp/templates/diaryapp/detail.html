@@ -65,8 +65,11 @@
     <hr>
     <div style='float:right; margin-right: 5%; margin-botton: 50px;'>
       {% if target_diary.writer == request.user %}
+          <a href="{% url 'diaries:list' %}" class="btn btn-link text-info me-auto border-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="List">
+            <i class="material-icons text-lg">list</i>
+          </a>
           <a href="{% url 'diaries:update' pk=target_diary.pk %}" class="btn btn-link text-info me-auto border-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit">
-          <i class="material-icons text-lg">edit</i>
+            <i class="material-icons text-lg">edit</i>
           </a>
           <a href='#' class="btn btn-link text-primary ms-auto border-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete">
             <i class="material-icons text-lg">delete</i>
