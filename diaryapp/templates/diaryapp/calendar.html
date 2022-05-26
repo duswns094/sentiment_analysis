@@ -1,0 +1,161 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %} Write Diary {% endblock %}
+{% block stylesheets %}
+<link rel="stylesheet" href="{% static 'calendar/css/calendar.css' %}">
+{% endblock stylesheets %}
+{% block content %}
+
+
+  {% include 'navigation.html' %}
+
+    <header class="header-2">
+        <div class="page-header min-vh-75 relative" style="background-image: url('https://images.unsplash.com/photo-1554757387-2a28855c78fb?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471')">
+          <span class="mask bg-gradient-dark opacity-4"></span>
+          <div class="container">
+            <div class="row">
+              <div class="col-lg-7 text-center mx-auto">
+                <h1 class="text-white pt-3 mt-n5">Sentiment Diary</h1>
+                <p class="lead text-white mt-3">Record Your Feelings <br /> 오늘 하루를 기록하고 감정을 분석받아보세요 </p>
+              </div>
+            </div>
+          </div>
+        </div>
+    </header>
+
+<div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6">
+    <div class="container">
+      <div class="calendar">
+        <div class="header">
+          <div class="year-month"></div>
+          <div class="nav">
+              <button class="btn btn-icon btn-sm btn-dark" type="button" onclick="prevMonth()">
+                <span class="btn-inner--icon">
+                <span class="material-symbols-outlined">arrow_back_ios</span>
+                </span>
+              </button>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="goToday()">Today</button>
+              <button class="btn btn-icon btn-sm btn-dark" type="button" onclick="nextMonth()">
+                <span class="btn-inner--icon">
+                <span class="material-symbols-outlined">arrow_forward_ios</span>
+                </span>
+              </button>
+          </div>
+        </div>
+        <div class="main">
+          <div class="days">
+            <div class="day">일</div>
+            <div class="day">월</div>
+            <div class="day">화</div>
+            <div class="day">수</div>
+            <div class="day">목</div>
+            <div class="day">금</div>
+            <div class="day">토</div>
+          </div>
+          <div class="dates"></div>
+        </div>
+      </div>
+    </div>
+</div>
+
+<script>
+   let diaries = [
+        {% for diary in diary_list %}
+          {
+             real_date: "{{ diary.real_date|date:'Y-m-d' }}",
+             content: "{{ diary.content }}",
+             color: "{{ diary.color }}",
+          },
+        {% endfor %}
+    ]
+    let date = new Date();
+
+  const renderCalender = () => {
+    const viewYear = date.getFullYear();
+    const viewMonth = date.getMonth();
+    const monthNameLong = date.toLocaleString("en-US", { month: "long" });
+    document.querySelector('.year-month').textContent = `${viewYear} ${monthNameLong}`;
+
+    const prevLast = new Date(viewYear, viewMonth, 0);
+    const thisLast = new Date(viewYear, viewMonth + 1, 0);
+
+    const PLDate = prevLast.getDate();
+    const PLDay = prevLast.getDay();
+
+    const TLDate = thisLast.getDate();
+    const TLDay = thisLast.getDay();
+
+    const prevDates = [];
+    const thisDates = [...Array(TLDate + 1).keys()].slice(1);
+    const nextDates = [];
+
+    if (PLDay !== 6) {
+      for (let i = 0; i < PLDay + 1; i++) {
+        prevDates.unshift(PLDate - i);
+      }
+    }
+
+    for (let i = 1; i < 7 - TLDay; i++) {
+      nextDates.push(i);
+    }
+
+    const dates = prevDates.concat(thisDates, nextDates);
+    const firstDateIndex = dates.indexOf(1);
+    const lastDateIndex = dates.lastIndexOf(TLDate);
+
+    dates.forEach((date, i) => {
+      const condition = i >= firstDateIndex && i < lastDateIndex + 1
+                        ? 'this'
+                        : 'other';
+      for(let i=0; i<diaries.length;i++){
+        console.log(new Date(diaries[i]['real_date']).getDate())
+        if(new Date(diaries[i]['real_date']).getDate() == date
+          && new Date(diaries[i]['real_date']).getYear() == viewYear
+          && new Date(diaries[i]['real_date']).getYear() == (viewMonth+1)){
+          console.log(date);
+          console.log(viewMonth);
+          console.log(viewYear);
+        }else{
+          console.log(viewYear+'-'+(viewMonth+1)+'-'+date);
+        };
+      };
+
+      dates[i] = `<div class="date" id="${date}"><span class=${condition}>${date}
+
+      </span></div>`;
+    });
+
+    document.querySelector('.dates').innerHTML = dates.join('');
+
+    const today = new Date();
+    if (viewMonth === today.getMonth() && viewYear === today.getFullYear()) {
+      for (let date of document.querySelectorAll('.this')) {
+        if (+date.innerText === today.getDate()) {
+          date.classList.add('today');
+          break;
+        }
+      }
+    }
+  };
+
+  renderCalender();
+
+  const prevMonth = () => {
+    date.setDate(1);
+    date.setMonth(date.getMonth() - 1);
+    renderCalendar();
+  }
+
+  const nextMonth = () => {
+    date.setDate(1);
+    date.setMonth(date.getMonth() + 1);
+    renderCalendar();
+  }
+
+  const goToday = () => {
+    date = new Date();
+    renderCalender();
+  };
+</script>
+{% endblock content %}
+

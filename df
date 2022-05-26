@@ -1,0 +1,140 @@
+[33mcommit ba56bc2cbb5beb83afc9e2ceb808c4e21fca6785[m[33m ([m[1;36mHEAD -> [m[1;32mmain[m[33m)[m
+Author: duswns094 <duswns094@gmail.com>
+Date:   Wed May 25 14:57:17 2022 +0900
+
+    diary-modified
+
+[33mcommit a1fceeaaccf7a3395170d87e71434c32c3c98916[m
+Author: duswns094 <duswns094@gmail.com>
+Date:   Wed May 25 08:51:36 2022 +0900
+
+    diaryapp modified
+
+[33mcommit 4a19b30b6e384842d8ecc1096df59785c0cf22a4[m[33m ([m[1;31morigin/main[m[33m)[m
+Author: duswns094 <duswns094@gmail.com>
+Date:   Tue May 24 23:46:24 2022 +0900
+
+    220524 file updated
+
+[33mcommit 3561ce0ca79c5f002538918142e34b69ee1b005a[m[33m ([m[1;32myeonjun_0524[m[33m)[m
+Merge: 6575d60 b3dd8d3
+Author: duswns094 <duswns094@gmail.com>
+Date:   Tue May 24 22:04:34 2022 +0900
+
+    failed
+
+[33mcommit 6575d6067538f2beb612b8ccdb2858e62f4506f2[m
+Author: duswns094 <duswns094@gmail.com>
+Date:   Tue May 24 22:03:18 2022 +0900
+
+    220524 file modified
+
+[33mcommit 47449a889c353f9076b866d7a675dd50e0e8caa4[m
+Merge: 4fa77a4 9851c80
+Author: duswns094 <duswns094@gmail.com>
+Date:   Tue May 24 21:58:42 2022 +0900
+
+    check where is now
+
+[33mcommit b3dd8d30839bc705023103168094803c7674fb0d[m
+Merge: 9851c80 e7d5d3d
+Author: Fed.Jeong <51530719+duswns094@users.noreply.github.com>
+Date:   Tue May 24 13:53:57 2022 +0900
+
+    Merge pull request #4 from duswns094/suhong_0523
+    
+    Merge pull request #3 from duswns094/main
+
+[33mcommit e7d5d3de43fbce23aa5bf451fe61451b9f2c0f13[m[33m ([m[1;31morigin/suhong_0523[m[33m)[m
+Merge: 7f4d9dc 9851c80
+Author: Fed.Jeong <51530719+duswns094@users.noreply.github.com>
+Date:   Tue May 24 13:53:20 2022 +0900
+
+    Merge pull request #3 from duswns094/main
+    
+    merge
+
+[33mcommit 4fa77a4032a80a042cd855a566b64a581c6f97e9[m
+Author: duswns094 <duswns094@gmail.com>
+Date:   Tue May 24 13:36:02 2022 +0900
+
+    220524
+
+[33mcommit 9851c8074eef1549122577ed4e4d3543599ebe00[m
+Merge: fa79821 4e3ed1e
+Author: Fed.Jeong <51530719+duswns094@users.noreply.github.com>
+Date:   Tue May 24 13:09:53 2022 +0900
+
+    Merge pull request #2 from duswns094/yoonmin
+    
+    Yoonmin
+
+[33mcommit ad8ec81cd0e40b40d0dbd8ce5f0d503f4631c8ef[m
+Merge: 30c4665 fa79821
+Author: duswns094 <duswns094@gmail.com>
+Date:   Tue May 24 11:07:10 2022 +0900
+
+    Merge branch 'main' of https://github.com/duswns094/sentiment_analysis
+
+[33mcommit 30c4665b00c273da3ff4017f4019118d7e1d9f71[m
+Author: duswns094 <duswns094@gmail.com>
+Date:   Tue May 24 11:06:52 2022 +0900
+
+    220524 commit
+
+[33mcommit fa79821a354435f01846a8aef857b3f81c61e6f3[m
+Author: bogeunchio <b0geun457@naver.com>
+Date:   Mon May 23 15:00:12 2022 +0900
+
+    first commit
+
+[33mcommit 4e3ed1e73048c8850dda9d8bc621b90d25bc308e[m
+Author: 8098yoonmin <ksw08130@naver.com>
+Date:   Mon May 23 14:31:47 2022 +0900
+
+    first commit
+
+[33mcommit c601a73c0f3b668b418ba3da506d0741eadd989e[m
+Author: 8098yoonmin <ksw08130@naver.com>
+Date:   Mon May 23 14:13:10 2022 +0900
+
+    start commit
+
+[33mcommit d5c0ab2e4cfbf37ae390b16805e2df3ec6e1f855[m
+Merge: f796c00 7f4d9dc
+Author: Fed.Jeong <51530719+duswns094@users.noreply.github.com>
+Date:   Mon May 23 14:12:17 2022 +0900
+
+    Merge pull request #1 from duswns094/suhong_0523
+    
+    first branch commit
+
+[33mcommit 7f4d9dcde9a30b100653ade71b5747553bbc9782[m
+Author: Xylitol311 <cktnghd0311@daum.net>
+Date:   Mon May 23 13:34:36 2022 +0900
+
+    first branch commit
+
+[33mcommit f796c008138fe0a0dbbd4d5bf87f0df030d719fd[m
+Author: duswns094 <duswns094@gmail.com>
+Date:   Mon May 23 10:39:47 2022 +0900
+
+    mldl add
+
+[33mcommit 3f660958ff2d6fb6bc574cf439302aff9fe08e3a[m
+Author: duswns094 <duswns094@gmail.com>
+Date:   Mon May 23 08:59:25 2022 +0900
+
+    first commit
+
+[33mcommit ab806391994e780878f702dce9d17f1c4ffb5eb4[m
+Author: duswns094 <duswns094@gmail.com>
+Date:   Sun May 22 21:00:20 2022 +0900
+
+    add accountapp
+
+[33mcommit 54071955bf3a51e08e4779b952631a7e9b06a685[m
+Author: duswns094 <duswns094@gmail.com>
+Date:   Sun May 22 20:32:17 2022 +0900
+
+    first commit

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'colorfield',
 ]
 
 MIDDLEWARE = [
@@ -136,3 +137,64 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 
+import pandas as pd
+import numpy as np
+
+import re
+import os
+import pickle
+import dill # for saving a function as a file
+import logging # for changing the tf's logging level
+from tensorflow.keras import layers, initializers, losses, optimizers, metrics
+
+import tensorflow as tf
+import tensorflow_addons as tfa
+
+import transformers
+from transformers import TFBertModel
+import sentencepiece as spm
+from tokenization_kobert import KoBertTokenizer
+
+
+def create_model(max_length=128):
+    bert_base_model = TFBertModel.from_pretrained("monologg/kobert", from_pt=True)
+    # bert_base_model = TFBertModel.from_pretrained('bert-base-multilingual-cased')
+
+    input_token_ids = layers.Input((max_length,), dtype=tf.int32, name='input_token_ids')  # tokens_tensor
+    input_masks = layers.Input((max_length,), dtype=tf.int32, name='input_masks')  # masks_tensor
+    input_segments = layers.Input((max_length,), dtype=tf.int32, name='input_segments')  # segments_tensor
+
+    bert_outputs = bert_base_model([input_token_ids, input_masks, input_segments])
+    # bert_outputs -> 0: 'last_hidden_state' & 1: 'pooler_output' (== applied GlobalAveragePooling1D on 'last_hidden_state')
+
+    bert_outputs = bert_outputs[
+        1]  # ('pooler_output', <KerasTensor: shape=(None, 768) dtype=float32 (created by layer 'tf_bert_model')>)
+    bert_outputs = layers.Dropout(0.2)(bert_outputs)
+    final_output = layers.Dense(units=3, activation='softmax',
+                                kernel_initializer=initializers.TruncatedNormal(stddev=0.02), name="classifier")(
+        bert_outputs)
+
+    model = tf.keras.Model(inputs=[input_token_ids, input_masks, input_segments],
+                           outputs=final_output)
+
+    # RAdam (Rectified-Adam) @ http://j.mp/2P5OmF3 / http://j.mp/2qzRjUa / http://j.mp/2N322hu / http://j.mp/2MYtPQ2
+    model.compile(
+        optimizer=tfa.optimizers.RectifiedAdam(learning_rate=1e-5, weight_decay=0.0025, warmup_proportion=0.05),
+        loss=losses.SparseCategoricalCrossentropy(),
+        metrics=[metrics.SparseCategoricalAccuracy()])
+
+    return model
+
+def model_load():
+    # 1) Load the Model-builder function
+
+    c_model = create_model() # use dill to pickle a python function
+
+
+    # 2) Create the model & load the Model-weights (from checkpoint file)
+    model = create_model(max_length=128)
+    model.load_weights(filepath='best_kobert_weights.h5')
+
+    return model
+
+MODEL = model_load()

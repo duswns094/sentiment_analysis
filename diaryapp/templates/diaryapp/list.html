@@ -56,15 +56,15 @@
                     </a>
                   </div>
                   <h5 class="font-weight-normal mt-3">
-                    <a href="{% url 'diaries:detail' pk=diary.pk %}">{{ diary.title }}</a>
+                    <a href="{% url 'diaries:detail' pk=diary.pk %}">{{ diary.real_date | truncatechars:10 }}</a>
                   </h5>
-                  <p class="mb-0">
-                    {{ diary.content }}
-                  </p>
                 </div>
                 <hr class="dark horizontal my-0">
                 <div class="card-footer d-flex">
-                  <p class="font-weight-normal my-auto">{{ diary.real_date}}</p>
+                  <p class="font-weight-normal my-auto">Day's Color</p>
+                  <span class="material-symbols-outlined" style="color:#{{ diary.color }}">crop_square</span>
+                  <span class="position-relative ms-auto me-1 my-auto">Day's Emoji</span>
+
                 </div>
               </div>
           </div>

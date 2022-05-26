@@ -7,20 +7,16 @@ class DiaryCreationForm(ModelForm):
 
     class Meta:
         model = Diary
-        fields = ['title','content','real_date','image']
+        fields = ['real_date','content','image']
         widgets = {
-            'title': forms.TextInput(attrs={
+            'real_date': forms.DateInput(attrs={
+                'format': '%Y-%m-%d',
                 'class': "form-control",
-                'placeholder': '제목을 입력해주세요'
+                'type': 'date',
             }),
             'content': forms.Textarea(attrs={
                 'class': "form-control",
                 'placeholder': '내용을 입력해주세요'
-            }),
-            'real_date': forms.DateInput(attrs={
-                'format' : '%Y-%m-%d',
-                'class': "form-control",
-                'type': 'date',
             }),
             'image': forms.FileInput(attrs={
                 'class': 'form-control'
