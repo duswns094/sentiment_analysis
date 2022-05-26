@@ -5,12 +5,16 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 from django.urls import reverse
 
+from .models import Carausel
+
 
 # Create your views here.
 
 @login_required(login_url="/accounts/login/")
 def index(request):
-
-    return render(request, 'homeapp/index.html', {})
-
-
+    obj = Carausel.objects.all()
+    context = {
+        'obj':obj
+    }
+    return render(request, 'homeapp/index.html', context)
+# Create your views here

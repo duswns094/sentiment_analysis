@@ -4,7 +4,7 @@ secrets.json
 # BERT Model
 best_kobert_weights.h5
 KoBERT-Transformers/
-
+image_analysis_model.h5
 # Created by https://www.toptal.com/developers/gitignore/api/windows,pycharm,django
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,pycharm,django
 

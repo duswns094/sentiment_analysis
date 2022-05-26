@@ -103,11 +103,10 @@ class DiaryListView(ListView):
     model = Diary
     context_object_name = 'diary_list'
     template_name = 'diaryapp/list.html'
-    ordering = ['-real_date']
     paginate_by = 21
 
     def get_queryset(self):  # 컨텍스트 오버라이딩
-        return Diary.objects.filter(writer=self.request.user)
+        return Diary.objects.filter(writer=self.request.user).order_by('-real_date')
 
 
 @method_decorator(login_required(login_url="/accounts/login/"), 'get')

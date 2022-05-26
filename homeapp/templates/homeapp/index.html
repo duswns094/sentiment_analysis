@@ -1,8 +1,8 @@
 {% extends "base.html" %}
 
-{% block title %} Sign IN {% endblock %}
+{% block title %} Home {% endblock %}
 
-{% block body_class %} sign-in {% endblock %}
+{% block body_class %} home {% endblock %}
 
 <!-- Specific Page CSS goes HERE  -->
 {% block stylesheets %}{% endblock stylesheets %}
@@ -12,8 +12,53 @@
 
   {% include 'navigation.html' %}
 
-  <div class="page-header min-vh-75 relative" style="background-image: url('https://images.unsplash.com/photo-1554757387-2a28855c78fb?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471')">
+    <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="1"
+                    aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="2"
+                    aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                {% for object in obj%}
+                <div class="carousel-item {% if forloop.counter0 == 0 %}active{% endif %}">
+                    <img src="{{object.image.url}}" style="height:600px;" class="testi-overly d-block w-100" alt="sliderImg">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h1 class="animate__animated
+                        {% if forloop.counter0 == 0 %}
+                        animate__fadeInDown
+                        {% endif %}
+                        {% if forloop.revcounter == 1 %}
+                        animate__bounce
+                        {% endif %}
+                        {% if forloop.revcounter == 2 %}
+                        animate__fadeInRight
+                        {% endif %}" style="color:lightgrey; font-weight:normal" ><I>{{object.title}}</I></h1>
+                        <h3 style="color:white; font-weight:100;" class="animate__animated animate__zoomIn"><I>{{object.sub_title}}</I></h3>
+                        <br>
+                        <div style="text-align:center">
 
-  </div>
+                        </div>
+                        <a href="{% url 'diaries:create' %}">
+                           <button type="button" class="btn btn-outline-secondary">create new</button>
+                        </a>
+                        <!-- <a href="{{object.link}}" class="button animate__animated animate__zoomIn mt-3 py-3 px-5 btn font-weight-bold">{{object.action_name}}</a> -->
+                      </div>
+                      <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                      </button>
+                      <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                      </button>
+                </div>
+                {% endfor %}
+            </div>
+          </div>
+
+
 
 {% endblock content %}

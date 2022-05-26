@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
+
 {% block title %} Write Diary {% endblock %}
 
 {% block content %}
-
 
   {% include 'navigation.html' %}
 
@@ -13,8 +13,8 @@
           <div class="container">
             <div class="row">
               <div class="col-lg-7 text-center mx-auto">
-                <h1 class="text-white pt-3 mt-n5">Sentiment Diary</h1>
-                <p class="lead text-white mt-3">Record Your Feelings <br /> 오늘 하루를 기록하고 감정을 분석받아보세요 </p>
+                <h1 class="text-white pt-3 mt-n5">The day`s diary</h1>
+                <p class="lead text-white mt-3">record of the day<br>{{ target_diary.created_at }}의 기록 </p>
               </div>
             </div>
           </div>
@@ -22,38 +22,58 @@
     </header>
 
 <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6">
-  <div>
-   <div style = "text-align: center; max-width: 700px; margin: 4rem auto">
-       <h1 style="margin-bottom: 1rem;">
-           {{ target_diary.title }}
-       </h1>
-
-       <p>
-             날짜: {{ target_diary.created_at }}
-       </p>
-       <hr>
-       {% if target_diary.image %}
-       <img src="{{ target_diary.image.url}}", alt=""
-       style="text-align:center; max-width: 100%; border-radius: 1rem; margin-bottom:2rem; object-fit:cover;">
-       {% else %}
-           이미지가 없습니다.
-       {% endif %}
-       <div style="margin-bottom: 2rem; text-align: left;">
-           {{ target_diary.content | safe }}
-       </div>
-       {% if target_diary.writer == request.user %}
-       <a href="{% url 'diaries:update' pk=target_diary.pk %}" class='btn btn-dark rounded-pill col-3'>
-           Edit
-       </a>
-       <a href="#"class='btn btn-danger rounded-pill col-3'>
-           Delete
-       </a>
-       {% endif %}
-       <hr>
-
-   </div>
+  <div style="margin-bottom: 1rem;">
+    <div class="container" style="margin: 4rem auto">
+      <div class="row">
+        <div class="col-sm">
+          <div class="row">
+            <div class="col-sm" style = "text-align: center; max-width: 15%;">
+              <a class="d-block blur-shadow-image" style="width: 100%; border-radius:1rem;">
+                <img src="{{ target_diary.emoji.url}}" style='width:45px'>
+              </a>
+            </div>
+            <div class="col-sm" style = "display: flex; align-items: center;">
+              <h3 style='margin:0' >
+                {{ target_diary.real_date }}
+              </h3>
+            </div>
+            <div class="col-sm" style = "max-width: 15%;">
+              {% if target_diary.image %}
+              <input type="color" id="head" name="head"
+                    value="#{{ target_diary.color }}" style='width: 45px; height: 45px; border-width: 0px;'>
+              {% else %}
+              <input type="color" id="head" name="head"
+                    value="#FFFFFF" style='width: 45px; height: 45px; border-width: 0px;'>
+              {% endif %}
+            </div>
+          </div>
+          <hr>
+          <div style="margin-bottom: 2rem; text-align: left;">
+              {{ target_diary.content | safe }}
+          </div>
+        </div>
+        <div class="col-sm">
+          {% if target_diary.image %}
+          <img src="{{ target_diary.image.url}}", alt="" style="text-align:center; max-width: 100%; border-radius: 1rem; margin-bottom:2rem; object-fit:cover;">
+          {% else %}
+          <img src="https://images.unsplash.com/photo-1554757387-2a28855c78fb?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471", alt=""
+          style="max-width: 100%; height:auto; border-radius:1rem; ">
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <hr>
+    <div style='float:right; margin-right: 5%; margin-botton: 50px;'>
+      {% if target_diary.writer == request.user %}
+          <a href="{% url 'diaries:update' pk=target_diary.pk %}" class="btn btn-link text-info me-auto border-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit">
+          <i class="material-icons text-lg">edit</i>
+          </a>
+          <a href='#' class="btn btn-link text-primary ms-auto border-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete">
+            <i class="material-icons text-lg">delete</i>
+          </a>
+      {% endif %}
+    </div>
   </div>
-
 </div>
 
 
