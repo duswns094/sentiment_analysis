@@ -15,8 +15,8 @@
           <div class="container">
             <div class="row">
               <div class="col-lg-7 text-center mx-auto">
-                <h1 class="text-white pt-3 mt-n5">Sentiment Diary</h1>
-                <p class="lead text-white mt-3">Record Your Feelings <br /> 오늘 하루를 기록하고 감정을 분석받아보세요 </p>
+                <h1 class="text-white pt-3 mt-n5">Sentiment Calendar</h1>
+                <p class="lead text-white mt-3">Check changes of your feelings <br /> 달력에서 일별 감정의 변화를 확인해보세요 </p>
               </div>
             </div>
           </div>
@@ -104,23 +104,21 @@
     const lastDateIndex = dates.lastIndexOf(TLDate);
 
     dates.forEach((date, i) => {
+
       const condition = i >= firstDateIndex && i < lastDateIndex + 1
                         ? 'this'
                         : 'other';
-      for(let i=0; i<diaries.length;i++){
-        console.log(new Date(diaries[i]['real_date']).getDate())
-        if(new Date(diaries[i]['real_date']).getDate() == date
-          && new Date(diaries[i]['real_date']).getYear() == viewYear
-          && new Date(diaries[i]['real_date']).getYear() == (viewMonth+1)){
-          console.log(date);
-          console.log(viewMonth);
-          console.log(viewYear);
-        }else{
-          console.log(viewYear+'-'+(viewMonth+1)+'-'+date);
+      var color = ''
+      for(let j=0; j<diaries.length;j++){
+
+        if(new Date(diaries[j]['real_date']).getDate() == date
+          && new Date(diaries[j]['real_date']).getFullYear() == viewYear
+          && new Date(diaries[j]['real_date']).getMonth() == (viewMonth)){
+          color = diaries[j]['color'] ;
+          console.log(color);
         };
       };
-
-      dates[i] = `<div class="date" id="${date}"><span class=${condition}>${date}
+      dates[i] = `<div class="date" id="${date}" style="background-color:#${color};"><span class=${condition}>${date}
 
       </span></div>`;
     });

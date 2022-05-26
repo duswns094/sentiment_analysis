@@ -21,6 +21,8 @@ from django.views.generic import CreateView, ListView, DetailView, UpdateView
 from diaryapp.decorators import diary_ownership_required
 from diaryapp.forms import DiaryCreationForm
 from diaryapp.models import Diary
+from PIL import Image
+from django.core.files.uploadedfile import UploadedFile
 
 
 def prediction(sentence):
@@ -72,7 +74,7 @@ class DiaryCreateView(CreateView):
         try:
             temp_diary = form.save(commit=False)
             temp_diary.writer = self.request.user
-            pred = prediction(temp_diary.content) [확률1, 확률2, 확률3 ]
+            pred = prediction(temp_diary.content) 
             temp_diary.negative = np.round(pred[0][0],2)
             temp_diary.positive = np.round(pred[0][1],2)
             temp_diary.neutral = np.round(pred[0][2],2)
@@ -80,13 +82,14 @@ class DiaryCreateView(CreateView):
                 np.argmax(pred, axis=1)[0]]
             if predicted_class =='부정':
                 temp_diary.color = '5C527F'
-                # temp_diary.emoji.url = 'media/emoji/bad.png'
+                temp_diary.image=UploadedFile(file=open("'media/emoji/bad.png'", 'rb'))
+                temp_diary.emoji = Image.open('media/emoji/bad.png')
             elif predicted_class == '긍정':
                 temp_diary.color='EF9F9F'
-                # temp_diary.emoji.url = 'media/emoji/good.png'
+                temp_diary.image=UploadedFile(file=open("'media/emoji/good.png'", 'rb'))
             else:
                 temp_diary.color='FFE3A9'
-                # temp_diary.emoji.url = 'media/emoji/neutral2.png'
+                temp_diary.image=UploadedFile(file=open("'media/emoji/neutral2.png'", 'rb'))
             temp_diary.save()
             return super().form_valid(form)
         except:
