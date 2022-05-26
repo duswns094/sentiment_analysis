@@ -82,7 +82,7 @@ class DiaryCreateView(CreateView):
                 np.argmax(pred, axis=1)[0]]
             if predicted_class =='부정':
                 temp_diary.color = '5C527F'
-                temp_diary.image=UploadedFile(file=open("media/emoji/bad.png", 'rb'))
+                temp_diary.emoji=UploadedFile(file=open("media/emoji/bad.png", 'rb'))
             elif predicted_class == '긍정':
                 temp_diary.color='EF9F9F'
                 temp_diary.emoji=UploadedFile(file=open("media/emoji/good.png", 'rb'))
@@ -136,7 +136,7 @@ class DiaryUpdateView(UpdateView):
                 np.argmax(pred, axis=1)[0]]
             if predicted_class =='부정':
                 temp_diary.color = '5C527F'
-                temp_diary.image=UploadedFile(file=open("media/emoji/bad.png", 'rb'))
+                temp_diary.emoji=UploadedFile(file=open("media/emoji/bad.png", 'rb'))
             elif predicted_class == '긍정':
                 temp_diary.color='EF9F9F'
                 temp_diary.emoji=UploadedFile(file=open("media/emoji/good.png", 'rb'))
