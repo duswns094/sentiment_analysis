@@ -29,13 +29,13 @@
         <div class="header">
           <div class="year-month"></div>
           <div class="nav">
-              <button class="btn btn-icon btn-sm btn-dark" type="button" onclick="prevMonth()">
+              <button class="btn btn-icon btn-sm btn-dark" onclick="prevMonth(); return false;">
                 <span class="btn-inner--icon">
                 <span class="material-symbols-outlined">arrow_back_ios</span>
                 </span>
               </button>
-              <button type="button" class="btn btn-secondary btn-sm" onclick="goToday()">Today</button>
-              <button class="btn btn-icon btn-sm btn-dark" type="button" onclick="nextMonth()">
+              <button  class="btn btn-secondary btn-sm" onclick="goToday(); return false;">Today</button>
+              <button class="btn btn-icon btn-sm btn-dark" onclick="nextMonth(); return false;">
                 <span class="btn-inner--icon">
                 <span class="material-symbols-outlined">arrow_forward_ios</span>
                 </span>
@@ -65,6 +65,7 @@
              real_date: "{{ diary.real_date|date:'Y-m-d' }}",
              content: "{{ diary.content }}",
              color: "{{ diary.color }}",
+             emoji: "{{ diary.emoji.url }}",
           },
         {% endfor %}
     ]
@@ -109,18 +110,22 @@
                         ? 'this'
                         : 'other';
       var color = ''
+      var emoji = ''
       for(let j=0; j<diaries.length;j++){
 
         if(new Date(diaries[j]['real_date']).getDate() == date
           && new Date(diaries[j]['real_date']).getFullYear() == viewYear
           && new Date(diaries[j]['real_date']).getMonth() == (viewMonth)){
           color = diaries[j]['color'] ;
+          emoji = '<div style="text-align:center; display:absoulte; height:0;"><img src="'+diaries[j]['emoji']+'"style ="width:3rem;"></div>'
           console.log(color);
         };
       };
-      dates[i] = `<div class="date" id="${date}" style="background-color:#${color};"><span class=${condition}>${date}
-
-      </span></div>`;
+      dates[i] =
+      `<div class="date" style="border:10px solid #${color};">
+        <span class=${condition}>${date}</span>
+        ${emoji}
+      </div>`;
     });
 
     document.querySelector('.dates').innerHTML = dates.join('');
@@ -141,13 +146,13 @@
   const prevMonth = () => {
     date.setDate(1);
     date.setMonth(date.getMonth() - 1);
-    renderCalendar();
+    renderCalender();
   }
 
   const nextMonth = () => {
     date.setDate(1);
     date.setMonth(date.getMonth() + 1);
-    renderCalendar();
+    renderCalender();
   }
 
   const goToday = () => {

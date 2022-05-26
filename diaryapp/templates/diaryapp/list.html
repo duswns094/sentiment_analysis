@@ -60,11 +60,14 @@
                   </h5>
                 </div>
                 <hr class="dark horizontal my-0">
-                <div class="card-footer d-flex">
+                <div class="card-footer d-flex" style="display:inline-block; align-items:center;" >
                   <p class="font-weight-normal my-auto">Day's Color</p>
                   <span class="material-symbols-outlined" style="color:#{{ diary.color }}">crop_square</span>
                   <span class="position-relative ms-auto me-1 my-auto">Day's Emoji</span>
-
+                  {% if diary.emoji %}
+                  <img src="{{ diary.emoji.url }}", alt=""
+                     style="width: 2rem; height:auto; ">
+                  {% endif %}
                 </div>
               </div>
           </div>

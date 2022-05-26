@@ -103,7 +103,7 @@ class DiaryListView(ListView):
     model = Diary
     context_object_name = 'diary_list'
     template_name = 'diaryapp/list.html'
-    ordering = ['-created_at']
+    ordering = ['-real_date']
     paginate_by = 21
 
     def get_queryset(self):  # 컨텍스트 오버라이딩

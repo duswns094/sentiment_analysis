@@ -44,12 +44,10 @@
   font-family: 'Poiret One', cursive;
   width: calc(100% / 7);
   padding: 15px;
-  text-align: center;
-  font-size: 35px;
-  align-items:center;
+  text-align:right;
+  font-size: 25px;
   border-bottom: 1px;
   border-left: 1px;
-  display:grid;
 }
 
 .day:nth-child(7n + 1),
@@ -77,8 +75,8 @@
   left: 50%;
   transform: translate(-50%, -50%);
   z-index: -1;
-  width: 100px;
-  height: 100px;
+  width: 40px;
+  height: 40px;
   display: block;
   background-color: #F4BFBF;
   border-radius: 50%;
