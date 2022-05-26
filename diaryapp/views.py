@@ -38,10 +38,13 @@ class DiaryListView(ListView):
     context_object_name = 'diary_list'
     template_name = 'diaryapp/list.html'
     paginate_by = 21
+    
+    def get_queryset(self):  # 컨텍스트 오버라이딩
+        return Diary.objects.filter(writer=self.request.user)
 
-    def get_context_data(self, **kwargs):
-        object_list = Diary.objects.filter(writer=self.get_object())
-        return super(DiaryListView, self).get_context_data(object_list=object_list)
+    # def get_context_data(self, **kwargs):
+    #     object_list = Diary.objects.filter(writer=self.get_object())
+    #     return super(DiaryListView, self).get_context_data(object_list=object_list)
 
 @method_decorator(login_required(login_url="/accounts/login/"), 'get')
 @method_decorator(diary_ownership_required, 'get')
