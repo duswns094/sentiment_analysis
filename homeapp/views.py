@@ -10,11 +10,10 @@ from .models import Carausel
 
 # Create your views here.
 
-@login_required(login_url="/accounts/login/")
 def index(request):
     obj = Carausel.objects.all()
     context = {
         'obj':obj
     }
     return render(request, 'homeapp/index.html', context)
-# Create your views here
+

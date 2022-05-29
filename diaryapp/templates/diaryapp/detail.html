@@ -14,7 +14,7 @@
             <div class="row">
               <div class="col-lg-7 text-center mx-auto">
                 <h1 class="text-white pt-3 mt-n5">The day`s diary</h1>
-                <p class="lead text-white mt-3">record of the day<br>{{ target_diary.created_at }}의 기록 </p>
+                <p class="lead text-white mt-3">record of the day<br>{{ target_diary.real_date }}의 기록 </p>
               </div>
             </div>
           </div>
@@ -22,61 +22,123 @@
     </header>
 
 <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6">
-  <div style="margin-bottom: 1rem;">
-    <div class="container" style="margin: 4rem auto">
+   <section class="py-lg-5">
+    <div class="container">
       <div class="row">
-        <div class="col-sm">
-          <div class="row">
-            <div class="col-sm" style = "text-align: center; max-width: 15%;">
-              <a class="d-block blur-shadow-image" style="width: 100%; border-radius:1rem;">
-                <img src="{{ target_diary.emoji.url}}" style='width:45px'>
-              </a>
-            </div>
-            <div class="col-sm" style = "display: flex; align-items: center;">
-              <h3 style='margin:0' >
-                {{ target_diary.real_date }}
-              </h3>
-            </div>
-            <div class="col-sm" style = "max-width: 15%;">
+        <div class="col" style="">
+          <div class="card box-shadow-xl overflow-hidden mb-5" ">
+            <div class="row" style="min-height:700px">
               {% if target_diary.image %}
-              <input type="color" id="head" name="head"
-                    value="#{{ target_diary.color }}" style='width: 45px; height: 45px; border-width: 0px;'>
+                <div class="col-lg-5 position-relative bg-cover px-0" style="background-image: url('{{ target_diary.image.url}}') " loading="lazy"></div>
               {% else %}
-              <input type="color" id="head" name="head"
-                    value="#FFFFFF" style='width: 45px; height: 45px; border-width: 0px;'>
+                <div class="col-lg-5 position-relative bg-cover px-0" style="background-image: url('https://images.unsplash.com/photo-1554757387-2a28855c78fb?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471')" loading="lazy"></div>
               {% endif %}
+              <div class="col-lg-7">
+                  <div class="card-header px-4 py-sm-5 py-3">
+                    <h2>{{ target_diary.real_date }}</h2>
+                  </div>
+                  <div class="card-body pt-1">
+                    <div class="row" style="min-height:500px">
+                      <div class="col-md-12 pe-2 mb-3">
+                        {{ target_diary.content | safe }}
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-6 text-end ms-auto">
+                        <a href="{% url 'diaries:update' pk=target_diary.pk %}" class="btn bg-gradient-info mb-0">
+                          <i class="material-icons text-lg">edit</i>
+                        </a>
+                        <a class="btn bg-gradient-danger mb-0" data-bs-toggle="modal" data-bs-target="#deleteModal" data-bs-placement="bottom" title="Delete">
+                          <i class="material-icons text-lg">delete</i>
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+              </div>
             </div>
           </div>
-          <hr>
-          <div style="margin-bottom: 2rem; text-align: left;">
-              {{ target_diary.content | safe }}
-          </div>
-        </div>
-        <div class="col-sm">
-          {% if target_diary.image %}
-          <img src="{{ target_diary.image.url}}", alt="" style="text-align:center; max-width: 100%; border-radius: 1rem; margin-bottom:2rem; object-fit:cover;">
-          {% else %}
-          <img src="https://images.unsplash.com/photo-1554757387-2a28855c78fb?crop=entropy&cs=tinysrgb&fm=jpg&ixlib=rb-1.2.1&q=80&raw_url=true&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1471", alt=""
-          style="max-width: 100%; height:auto; border-radius:1rem; ">
-          {% endif %}
         </div>
       </div>
-    </div>
-    <hr>
-    <div style='float:right; margin-right: 5%; margin-botton: 50px;'>
-      {% if target_diary.writer == request.user %}
-          <a href="{% url 'diaries:update' pk=target_diary.pk %}" class="btn btn-link text-info me-auto border-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Edit">
-          <i class="material-icons text-lg">edit</i>
-          </a>
-          <a href='#' class="btn btn-link text-primary ms-auto border-0" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Delete">
-            <i class="material-icons text-lg">delete</i>
-          </a>
-      {% endif %}
+  </section>
+  <section class="pb-5 position-relative bg-gradient-dark mx-n3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 text-start mb-5 mt-5">
+            <h3 class="text-white z-index-1 position-relative">The Day's Sentiment</h3>
+            <p class="text-white opacity-8 mb-0">{{ target_diary.real_date }}의 일기에 쓰여진 감정을 확인하세요</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-12">
+            <div class="card card-profile mt-4">
+              <div class="row">
+                <div class="col-lg-4 col-md-6 col-12 mt-n5">
+                  <a href="javascript:;">
+                    <div class="p-3 pe-md-0">
+                      <img class="w-100 border-radius-md shadow-lg" src="{{ target_diary.emoji.url}}" alt="image">
+                    </div>
+                  </a>
+                </div>
+                <div class="col-lg-8 col-md-6 col-12 my-auto">
+                  <div class="card-body ps-lg-0">
+                    <h5 class="mb-0">Day's Emoji</h5>
+                    <h6 class="text-info">{{ target_diary.real_date }}의 감정</h6>
+                    <p class="mb-0">감정의 이모지입니다. </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-12">
+            <div class="card card-profile mt-lg-4 mt-5">
+              <div class="row">
+                <div class="col-lg-4 col-md-6 col-12 mt-n5">
+                  <a href="javascript:;">
+                    <div class="p-3 pe-md-0">
+                      <input type="color" id="head" name="head"
+                        value="#{{ target_diary.color }}" class="w-100 border-radius-md shadow-lg" style="height:170px;">
+                    </div>
+                  </a>
+                </div>
+                <div class="col-lg-8 col-md-6 col-12 my-auto">
+                  <div class="card-body ps-lg-0">
+                    <h5 class="mb-0">Day's Color</h5>
+                    <h6 class="text-info">{{ target_diary.real_date }}의 색</h6>
+                    <p class="mb-0">감정의 색입니다</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="deleteModalLabel">삭제 확인</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        {{ target_diary.real_date}}의 일기를 삭제하시겠습니까?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Close</button>
+        <form class="post-form d-inline" action="{% url 'diaries:delete' pk=target_diary.pk %}" method="post">
+          {% csrf_token %}
+          <a href="{% url 'diaries:delete' pk=target_diary.pk %}"><button type="button" class="btn bg-gradient-danger">삭제 하기</button></a>
+        </form>
+      </div>
     </div>
   </div>
 </div>
-
-
 <script src='{% static "/assets/js/core/popper.min.js" %}' type="text/javascript"></script>
 <script src='{% static "/assets/js/core/bootstrap.min.js" %}' type="text/javascript"></script>
 <script src='{% static "/assets/js/material-kit.min.js" %}' type="text/javascript"></script>

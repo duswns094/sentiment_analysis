@@ -1,66 +1,74 @@
-import re
-from tokenization_kobert import KoBertTokenizer
-import numpy as np
-from django.conf import settings
-import tensorflow as tf
-import tensorflow_addons as tfa
-import transformers
-from transformers import TFBertModel
-import sentencepiece as spm
-
-
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.db import IntegrityError
 from django.utils.decorators import method_decorator
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 
-from django.views.generic import CreateView, ListView, DetailView, UpdateView
+from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
 
 from diaryapp.decorators import diary_ownership_required
 from diaryapp.forms import DiaryCreationForm
 from diaryapp.models import Diary
 from PIL import Image
+
+#for prediction
 from django.core.files.uploadedfile import UploadedFile
+from django.conf import settings
+import pandas as pd
+import numpy as np
+from . import inference_bert
+from tokenization_kobert import KoBertTokenizer
 
+def bert_predict(sentence):
 
-def prediction(sentence):
-    # 2) Load the Bert-tokenizer
     tokenizer = KoBertTokenizer.from_pretrained('monologg/kobert')
-    SEQ_LEN = 128 # 최대 token 개수 이상의 값으로 임의로 설정
+    model = settings.MODEL_KOBERT
 
-    token_ids =[]
-    token_masks =[]
-    token_segments =[]
+    result_bert = inference_bert.predict_sentiment(sentence, tokenizer, model)
 
+    return result_bert
 
-        # 특수문자 제거
-    cleaned_sentence = re.sub("[^\s0-9a-zA-Zㄱ-ㅎㅏ-ㅣ가-힣]", "", sentence) # [ whitespaces, 숫자, 영문 알파벳, 한글(+자모음) ]이 아닌 것을 공백으로 치환 (특수문자 제거)
+def image_predict(image):
+    model = settings.MODEL_IMAGE
+    img_height = 250
+    img_width = 250
+    image_resize = image.resize((img_height,img_width))
+    img_array = np.array(image_resize)
+    img_array = img_array.reshape(1,img_height,img_width,3)
+    result_image = model.predict(img_array)
 
-    # Tokenizing / Tokens to sequence numbers / Padding
-    encoded_dict = tokenizer.encode_plus(text=cleaned_sentence,
-                                         padding='max_length',
-                                         truncation = True,
-                                         max_length=SEQ_LEN) # SEQ_LEN == 512
-
-    token_ids.append(encoded_dict['input_ids']) # tokens_tensor
-    token_masks.append(encoded_dict['attention_mask']) # masks_tensor
-    token_segments.append(encoded_dict['token_type_ids']) # segments_tensor
+    return result_image
 
 
-    inputs = (np.array(token_ids), np.array(token_masks), np.array(token_segments))
+def weighted_sum(text_pred, image_pred):
+    # text_pred 중립과 긍정 위치 변경 (부정, 중립, 긍정 순이 알아보기 편할 거 같아 변경했습니다.)
+    temp_list = []
+    temp_list.append(text_pred[0][0])
+    temp_list.append(text_pred[0][2])
+    temp_list.append(text_pred[0][1])
+    text_result = np.array([temp_list])  # 부정, 중립, 긍정
+    image_result = image_pred  # 부정, 중립, 긍정
+    print(text_result, image_result)
 
-    pred_model = settings.MODEL
-    prediction = pred_model.predict(inputs)
-    predicted_probability = np.round(np.max(prediction) * 100,
-                                     2)  # ex) [[0.0125517 0.9874483, 0.0000000]]
-    predicted_class = ['부정', '긍정', '중립'][
-        np.argmax(prediction, axis=1)[0]]  # ex) ['부정', '긍정'][[1][0]] -> ['부정', '긍정'][1] -> '긍정'
+    # 가중치
+    high_wv = 0.8
+    low_wv = 0.2
+    mid_wv = 0.5
+    # 이미지 분류 결과 긍정 혹은 부정이 0.9 이상인 경우 이미지 예측 결과에 높은 가중치 적용(중립 제외)
+    if image_result[0][0] >= 0.9 or image_result[0][2] >= 0.9:
+        weighted_image = image_result * high_wv
+        weighted_text = text_result * low_wv
+        weighted_result = weighted_image + weighted_text
+    else:
+        weighted_image = image_result * mid_wv
+        weighted_text = text_result * mid_wv
+        weighted_result = weighted_image + weighted_text
 
-    pred = "{}% 확률로 {} 문장입니다.".format(predicted_probability, predicted_class)
+    return weighted_result
 
-    return prediction
 
 @method_decorator(login_required(login_url="/accounts/login/"), 'get')
 @method_decorator(login_required(login_url="/accounts/login/"), 'post')
@@ -74,26 +82,37 @@ class DiaryCreateView(CreateView):
         try:
             temp_diary = form.save(commit=False)
             temp_diary.writer = self.request.user
-            pred = prediction(temp_diary.content)
-            temp_diary.negative = np.round(pred[0][0],2)
-            temp_diary.positive = np.round(pred[0][1],2)
-            temp_diary.neutral = np.round(pred[0][2],2)
-            predicted_class = ['부정', '긍정', '중립'][
-                np.argmax(pred, axis=1)[0]]
+            temp_diary.save()
+
+            # prediction
+            img = Image.open(settings.MEDIA_ROOT_URL + settings.MEDIA_URL + str(temp_diary.image)).convert('RGB')
+            bert_pred = bert_predict(temp_diary.content)
+            image_pred = image_predict(img)
+            pred = weighted_sum(bert_pred, image_pred)
+
+            temp_diary.negative = np.round(pred[0][0], 2)
+            temp_diary.positive = np.round(pred[0][1], 2)
+            temp_diary.neutral = np.round(pred[0][2], 2)
+            predicted_class = ['부정', '중립', '긍정'][np.argmax(pred, axis=1)[0]]
             if predicted_class =='부정':
                 temp_diary.color = '5C527F'
-                temp_diary.emoji=UploadedFile(file=open("media/emoji/bad.png", 'rb'))
+                temp_diary.emoji="emoji/bad1.jpg"
             elif predicted_class == '긍정':
                 temp_diary.color='EF9F9F'
-                temp_diary.emoji=UploadedFile(file=open("media/emoji/good.png", 'rb'))
+                temp_diary.emoji="emoji/good1.jpg"
             else:
                 temp_diary.color='FFE3A9'
-                temp_diary.emoji=UploadedFile(file=open("media/emoji/neutral2.png", 'rb'))
+                temp_diary.emoji="emoji/neutral.jpg"
             temp_diary.save()
-            return super().form_valid(form)
-        except:
-            print("실패")
 
+            return super().form_valid(form)
+        except IntegrityError:
+            messages.warning(self.request, "이미 같은 날짜에 일기가 생성되어 있습니다. ")
+            return redirect('diaries:list')
+
+    def form_invalid(self, form):
+        messages.error(self.request, "양식을 잘못 입력하셨습니다")
+        return super().form_invalid(form)
 
     def get_success_url(self):
         return reverse('diaries:list')
@@ -103,7 +122,7 @@ class DiaryListView(ListView):
     model = Diary
     context_object_name = 'diary_list'
     template_name = 'diaryapp/list.html'
-    paginate_by = 21
+    paginate_by = 12
 
     def get_queryset(self):  # 컨텍스트 오버라이딩
         return Diary.objects.filter(writer=self.request.user).order_by('-real_date')
@@ -125,27 +144,33 @@ class DiaryUpdateView(UpdateView):
     form_class = DiaryCreationForm
     template_name = 'diaryapp/update.html'
     def form_valid(self, form):
-        try:
-            temp_diary = form.save(commit=False)
-            pred = prediction(temp_diary.content)
-            temp_diary.negative = np.round(pred[0][0],2)
-            temp_diary.positive = np.round(pred[0][1],2)
-            temp_diary.neutral = np.round(pred[0][2],2)
-            predicted_class = ['부정', '긍정', '중립'][
-                np.argmax(pred, axis=1)[0]]
-            if predicted_class =='부정':
-                temp_diary.color = '5C527F'
-                temp_diary.emoji=UploadedFile(file=open("media/emoji/bad.png", 'rb'))
-            elif predicted_class == '긍정':
-                temp_diary.color='EF9F9F'
-                temp_diary.emoji=UploadedFile(file=open("media/emoji/good.png", 'rb'))
-            else:
-                temp_diary.color='FFE3A9'
-                temp_diary.emoji=UploadedFile(file=open("media/emoji/neutral2.png", 'rb'))
-            temp_diary.save()
-            return super().form_valid(form)
-        except:
-            print("실패")
+        temp_diary = form.save(commit=False)
+        temp_diary.writer = self.request.user
+        temp_diary.save()
+
+        # prediction
+        img = Image.open(settings.MEDIA_ROOT_URL + settings.MEDIA_URL + str(temp_diary.image)).convert('RGB')
+        bert_pred = bert_predict(temp_diary.content)
+        image_pred = image_predict(img)
+        pred = weighted_sum(bert_pred, image_pred)
+
+        temp_diary.negative = np.round(pred[0][0], 2)
+        temp_diary.positive = np.round(pred[0][1], 2)
+        temp_diary.neutral = np.round(pred[0][2], 2)
+        predicted_class = ['부정', '중립', '긍정'][np.argmax(pred, axis=1)[0]]
+        if predicted_class == '부정':
+            temp_diary.color = '5C527F'
+            temp_diary.emoji = "emoji/bad1.jpg"
+        elif predicted_class == '긍정':
+            temp_diary.color = 'EF9F9F'
+            temp_diary.emoji = "emoji/good1.jpg"
+        else:
+            temp_diary.color = 'FFE3A9'
+            temp_diary.emoji = "emoji/neutral.jpg"
+        temp_diary.save()
+
+        return super().form_valid(form)
+
     def get_success_url(self):
         return reverse('diaries:detail', kwargs={'pk':self.object.pk})
 
@@ -160,3 +185,14 @@ class DiaryCalendarView(ListView):
     def get_queryset(self):  # 컨텍스트 오버라이딩
         return Diary.objects.filter(writer=self.request.user)
 
+@method_decorator(login_required(login_url="/accounts/login/"), 'get')
+@method_decorator(login_required(login_url="/accounts/login/"), 'post')
+@method_decorator(diary_ownership_required, 'get')
+@method_decorator(diary_ownership_required, 'post')
+class DiaryDeleteView(DeleteView):
+    model = Diary
+    context_object_name = 'diary_list'
+    success_url = reverse_lazy('diaries:list')
+
+    def get(self, request, *args, **kwargs):
+        return self.post(request, *args, **kwargs)

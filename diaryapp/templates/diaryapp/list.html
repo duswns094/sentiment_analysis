@@ -22,6 +22,24 @@
     </header>
 
 <div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6">
+  {% for message in messages %}
+  <div class="container justify-content: center">
+    <div class="alert {{ message.tags }} alert-dismissible fade show" role="alert">
+        <span class="alert-text"><strong>Warning!</strong> {{ message }}</span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+    </div>
+  </div>
+  {% endfor %}
+  <div class="container justify-content: center" style="margin-top:2rem;">
+    <div style="text-align: right;">
+      <a href="{% url 'diaries:create' %}" class="material-icons"
+               style = "box-shadow: 0 0 4px grey; border-radius: 10rem; padding: .4rem;">
+        add
+      </a>
+    </div>
+  </div>
   {% if diary_list %}
     <div class="container justify-content: center">
       <div class="row">
@@ -60,19 +78,44 @@
                   </h5>
                 </div>
                 <hr class="dark horizontal my-0">
-                <div class="card-footer d-flex" style="display:inline-block; align-items:center;" >
-                  <p class="font-weight-normal my-auto">Day's Color</p>
+                <div class="card-footer d-flex" style="display:inline-block; align-items:center; padding:12px" >
+                  <p class="font-weight-normal my-auto">Day's Color: </p>
                   <span class="material-symbols-outlined" style="color:#{{ diary.color }}">crop_square</span>
-                  <span class="position-relative ms-auto me-1 my-auto">Day's Emoji</span>
+                  <span class="position-relative ms-auto me-1 my-auto">Day's Emoji: </span>
                   {% if diary.emoji %}
                   <img src="{{ diary.emoji.url }}", alt=""
-                     style="width: 2rem; height:auto; ">
+                     style="width: 3rem; height:3rem; ">
                   {% endif %}
                 </div>
               </div>
           </div>
       {% endfor %}
+        <ul class="pagination pagination-info" style="justify-content: center; margin: 1rem 0;">
+        {% if page_obj.has_previous %}
+          <li class="page-item">
+            <a href="?page={{ page_obj.previous_page_number }}"
+              class = "page-link">
+              {{ page_obj.previous_page_number }}
+            </a>
+          </li>
+        {% endif %}
+        <li class="page-item active">
+          <a href="?page={{ page_obj.number }}"
+             class = "page-link">
+              {{ page_obj.number }}
+          </a>
+        </li>
+        {% if page_obj.has_next %}
+        <li class="page-item">
+          <a href="?page={{ page_obj.next_page_number }}"
+              class = "page-link">
+              {{ page_obj.next_page_number }}
+          </a>
+        </li>
+        {% endif %}
+      </ul>
       </div>
+
     </div>
   {% else %}
     <div style="text-align:center;">
@@ -81,6 +124,7 @@
       </h2>
     </div>
   {% endif %}
+
 </div>
 
 

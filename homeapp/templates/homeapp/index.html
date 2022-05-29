@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block title %} Home {% endblock %}
 
 {% block body_class %} home {% endblock %}
@@ -11,7 +11,7 @@
 
 
   {% include 'navigation.html' %}
-
+  <header class="bg-gradient-dark">
     <div id="carouselExampleCaptions" class="carousel slide" data-bs-ride="carousel">
             <div class="carousel-indicators">
                 <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active"
@@ -42,7 +42,7 @@
 
                         </div>
                         <a href="{% url 'diaries:create' %}">
-                           <button type="button" class="btn btn-outline-secondary">create new</button>
+                           <button type="button" class="btn bg-white text-dark">create new</button>
                         </a>
                         <!-- <a href="{{object.link}}" class="button animate__animated animate__zoomIn mt-3 py-3 px-5 btn font-weight-bold">{{object.action_name}}</a> -->
                       </div>
@@ -55,10 +55,276 @@
                       <span class="visually-hidden">Next</span>
                       </button>
                 </div>
+
                 {% endfor %}
             </div>
           </div>
+    </header>
+    </div>
+    <div class="card card-body shadow-xl mx-3 mx-md-4 mt-6">
+    <!-- Section with four info areas left & one card right with image and waves -->
+    <section class="py-7">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-6 m-auto">
+            <h4>AI를 통해 일기의 감정을 읽습니다.</h4>
+            <p class="mb-4">
+              RYF팀은 Sentiment Diary 서비스를 제공하고 있습니다.
+            </p>
+            <p class="mb-4">
+              Sentiment Diary는 사용자가 일기를 기록할 경우 다음의 순서로 감성분석을 진행합니다
+            </p>
+            <p class="mb-4">
+              첫번째로,
+              일기에 쓰여진 텍스트를 기반으로 감성분석을 진행하여 긍정/중립/부정으로 분류를 진행합니다.
+              이때 분석에 사용하는 딥러닝 모델은 사전훈련된 KOBERT를 파인튜닝한 모델입니다.
+            </p>
+            <p class="mb-4">
+              두번째로, 사용자가 일기에 이미지를 올렸을 경우 해당 이미지에 대해서도 감성분석을 진행하여 긍정/중립/부정으로 분류를 진행합니다.
+              이때 분석에 사용하는 딥러닝 모델은 직접학습한 CNN모델을 사용하였습니다.
+            </p>
+            <p class="mb-4">
+              최종적으로 분류되는 감성은 텍스트감성분석 결과와 이미지 감성분석 결과를 가중합산하여 나온 수치를 기반으로 합니다.
+            </p>
+          </div>
+          <div class="col-md-5 ms-auto">
+            <div class="position-relative">
+              <img class="max-width-50 w-100 position-relative z-index-2" src="https://images.unsplash.com/photo-1616212145026-6b56a5b3e01f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80" alt="image">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="pb-5 position-relative bg-gradient-dark mx-n3">
+          <div class="container">
+        <div class="row">
+          <div class="col-md-5 ms-auto">
+              <div class="position-relative">
+                <img class="max-width-50 w-100 position-relative z-index-2" src="{% static 'info/emojis.png'%}" alt="image">
+              </div>
+          </div>
+          <div class="col-md-6 m-auto">
+            <h4 class="text-white">감정을 이모지와 색상으로 표현합니다.</h4>
+            <p class="mb-4 text-white">
+              Sentiment Diary는 분석된 결과를 이모지와 색상으로 표현합니다.
+            </p>
+            <p class="mb-4 text-white">
+              감성분석의 결과는 부정,중립,긍정에 대한 비율로 계산되어 나옵니다.
+              계산된 비율의 구간을 나누고 각 구간마다 이모지 및 색상을 지정하여 표현합니다.
+            </p>
+            <p class="mb-4 text-white">
+              긍정,부정,중립의 감정을 최대한 이모지가 잘 표현할 수 있도록 설정하였으나
+              표현된 이모지를 보는 사람에 따라 느끼는 감정이 주관적일 수 있습니다.
+            </p>
+            <p class="mb-4 text-white">
+              또한 긍정,부정,중립의 감정을 최대한 색상이 잘 표현할 수 있도록 설정하였으나
+              표현된 색상을 보는 사람에 따라 느끼는 감정이 주관적일 수 있습니다.
+            </p>
+          </div>
 
+        </div>
+      </div>
+    </section>
 
+    <section class="my-5 pt-5">
+      <div class="container">
+      <h3>Used Data</h3>
+      <div class="card mt-6"  >
+        <div class="table-responsive">
+          <table class="table align-items-center mb-0">
+            <thead>
+              <tr>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Link</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0">한국어 감정 정보가 포함된 단발성 대화 데이터셋</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <p class="font-weight-bold mb-0">https://aihub.or.kr/opendata/keti-data/recognition-laguage/KETI-02-009</p>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0">네이버 영화 리뷰</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <p class="font-weight-bold mb-0">https://github.com/e9t/nsmc</p>
+                </td>
+              </tr>
+            <tr>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0">한국어 혐오 표현 데이터</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <p class="font-weight-bold mb-0">https://github.com/kocohub/korean-hate-speech</p>
+                </td>
+              </tr>
+            <tr>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0">Chatbot_data</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <p class="font-weight-bold mb-0">https://github.com/songys/Chatbot_data</p>
+                </td>
+              </tr>
+            <tr>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0">한국어 욕설 감지 데이터셋</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <p class="font-weight-bold mb-0">https://github.com/2runo/Curse-detection-data</p>
+                </td>
+              </tr>
+            <tr>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0">네이버 쇼핑몰 리뷰, Steam 한국어 리뷰</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <p class="font-weight-bold mb-0">https://github.com/bab2min/corpus/tree/master/sentiment</p>
+                </td>
+              </tr>
+             <tr>
+                <td>
+                  <div class="d-flex px-2 py-1">
+                    <div class="d-flex flex-column justify-content-center">
+                      <h6 class="mb-0">Image Sentiment Polarity</h6>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <p class="font-weight-bold mb-0">https://data.world/crowdflower/image-sentiment-polarity</p>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      </div>
+    </section>
+    <section class="pb-5 position-relative bg-gradient-dark mx-n3">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 text-start mb-5 mt-5">
+            <h3 class="text-white z-index-1 position-relative">RYF Team</h3>
+            <p class="text-white opacity-8 mb-0">RYF팀은 멋쟁이 사자처럼 AI SCHOOL 5기에서 만나 앞으로 나아가기 위해 정진하는 팀입니다</p>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-lg-6 col-12">
+            <div class="card card-profile mt-4">
+              <div class="row">
+                <div class="col-lg-4 col-md-6 col-12 mt-n5">
+                  <a href="javascript:;">
+                    <div class="p-3 pe-md-0">
+                      <img class="w-100 border-radius-md shadow-lg" src="{% static 'info/yeonjun.jpg'%}" alt="image">
+                    </div>
+                  </a>
+                </div>
+                <div class="col-lg-8 col-md-6 col-12 my-auto">
+                  <div class="card-body ps-lg-0">
+                    <h5 class="mb-0">정연준</h5>
+                    <h6 class="text-info">Team Leader</h6>
+                    <p class="mb-0">어제보다 더 나은 내가 되기 위해 노력하자</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-12">
+            <div class="card card-profile mt-lg-4 mt-5">
+              <div class="row">
+                <div class="col-lg-4 col-md-6 col-12 mt-n5">
+                  <a href="javascript:;">
+                    <div class="p-3 pe-md-0">
+                      <img class="w-100 border-radius-md shadow-lg" src="{% static 'info/suhong.jpg'%}" alt="image">
+                    </div>
+                  </a>
+                </div>
+                <div class="col-lg-8 col-md-6 col-12 my-auto">
+                  <div class="card-body ps-lg-0">
+                    <h5 class="mb-0">차수홍</h5>
+                    <h6 class="text-info">Team Member</h6>
+                    <p class="mb-0">감사할 줄 아는 사람이 되자</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-4">
+          <div class="col-lg-6 col-12">
+            <div class="card card-profile mt-4 z-index-2">
+              <div class="row">
+                <div class="col-lg-4 col-md-6 col-12 mt-n5">
+                  <a href="javascript:;">
+                    <div class="p-3 pe-md-0">
+                      <img class="w-100 border-radius-md shadow-lg" src="{% static 'info/yeunmin.jpg'%}" alt="image">
+                    </div>
+                  </a>
+                </div>
+                <div class="col-lg-8 col-md-6 col-12 my-auto">
+                  <div class="card-body ps-lg-0">
+                    <h5 class="mb-0">김윤민</h5>
+                    <h6 class="text-info">Team Member</h6>
+                    <p class="mb-0">성실한 사람이 되자</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6 col-12">
+            <div class="card card-profile mt-lg-4 mt-5 z-index-2">
+              <div class="row">
+                <div class="col-lg-4 col-md-6 col-12 mt-n5">
+                  <a href="javascript:;">
+                    <div class="p-3 pe-md-0">
+                      <img class="w-100 border-radius-md shadow-lg" src="{% static 'info/bogeun.png'%}" alt="image">
+                    </div>
+                  </a>
+                </div>
+                <div class="col-lg-8 col-md-6 col-12 my-auto">
+                  <div class="card-body ps-lg-0">
+                    <h5 class="mb-0">최보근</h5>
+                    <h6 class="text-info">Team Member</h6>
+                    <p class="mb-0">행동하는대로 생각하는 사람이 되자</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- -------- END PRE-FOOTER 1 w/ SUBSCRIBE BUTTON AND IMAGE ------- -->
+  </div>
 
 {% endblock content %}
