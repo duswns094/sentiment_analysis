@@ -51,7 +51,7 @@ def weighted_sum(text_pred, image_pred):
     temp_list.append(text_pred[0][1])
     text_result = np.array([temp_list])  # 부정, 중립, 긍정
     image_result = image_pred  # 부정, 중립, 긍정
-    print(text_result, image_result)
+    print("텍스트 결과[부정,중립,긍정]:",text_result, "이미지 결과[부정,중립,긍정]:",image_result)
 
     # 가중치
     high_wv = 0.8
@@ -66,9 +66,46 @@ def weighted_sum(text_pred, image_pred):
         weighted_image = image_result * mid_wv
         weighted_text = text_result * mid_wv
         weighted_result = weighted_image + weighted_text
-
+    print("최종 결과[부정,중립,긍정]:", weighted_result)
     return weighted_result
 
+
+def show_results(weighted_result):
+    predicted_class = ['부정', '중립', '긍정'][np.argmax(weighted_result, axis=1)[0]]
+    if predicted_class == '부정' :
+        if weighted_result[0][0] <= 0.6:
+            color = 'F10086'
+            emoji = "emoji/bad1.jpg"
+        elif 0.6 < weighted_result[0][0] <= 0.8:
+            color = '711A75'
+            emoji = "emoji/bad2.jpg"
+        else:
+            color = '180A0A'
+            emoji = "emoji/bad3.jpg"
+
+    elif predicted_class == '중립':
+        if weighted_result[0][1] <= 0.6:
+            color = 'D9D7F1'
+            emoji = "emoji/neutral1.jpg"
+        elif 0.6 < weighted_result[0][1] <= 0.8:
+            color = 'FFFDDE'
+            emoji = "emoji/neutral2.jpg"
+        else:
+            color = 'E7FBBE'
+            emoji = "emoji/neutral3.jpg"
+
+    else:
+        if weighted_result[0][2] <= 0.6:
+            color = 'FAD4D4'
+            emoji = "emoji/good1.jpg"
+        elif 0.6 < weighted_result[0][2] <= 0.8:
+            color = 'EF9F9F'
+            emoji = "emoji/good2.jpg"
+        else:
+            color = 'F47C7C'
+            emoji = "emoji/good3.jpg"
+
+    return color, emoji
 
 @method_decorator(login_required(login_url="/accounts/login/"), 'get')
 @method_decorator(login_required(login_url="/accounts/login/"), 'post')
@@ -89,20 +126,13 @@ class DiaryCreateView(CreateView):
             bert_pred = bert_predict(temp_diary.content)
             image_pred = image_predict(img)
             pred = weighted_sum(bert_pred, image_pred)
-
+            color, emoji = show_results(pred)
             temp_diary.negative = np.round(pred[0][0], 2)
-            temp_diary.positive = np.round(pred[0][1], 2)
-            temp_diary.neutral = np.round(pred[0][2], 2)
-            predicted_class = ['부정', '중립', '긍정'][np.argmax(pred, axis=1)[0]]
-            if predicted_class =='부정':
-                temp_diary.color = '5C527F'
-                temp_diary.emoji="emoji/bad1.jpg"
-            elif predicted_class == '긍정':
-                temp_diary.color='EF9F9F'
-                temp_diary.emoji="emoji/good1.jpg"
-            else:
-                temp_diary.color='FFE3A9'
-                temp_diary.emoji="emoji/neutral.jpg"
+            temp_diary.neutral = np.round(pred[0][1], 2)
+            temp_diary.positive = np.round(pred[0][2], 2)
+            temp_diary.color = color
+            temp_diary.emoji= emoji
+
             temp_diary.save()
 
             return super().form_valid(form)
@@ -153,20 +183,13 @@ class DiaryUpdateView(UpdateView):
         bert_pred = bert_predict(temp_diary.content)
         image_pred = image_predict(img)
         pred = weighted_sum(bert_pred, image_pred)
-
+        color, emoji = show_results(pred)
         temp_diary.negative = np.round(pred[0][0], 2)
-        temp_diary.positive = np.round(pred[0][1], 2)
-        temp_diary.neutral = np.round(pred[0][2], 2)
-        predicted_class = ['부정', '중립', '긍정'][np.argmax(pred, axis=1)[0]]
-        if predicted_class == '부정':
-            temp_diary.color = '5C527F'
-            temp_diary.emoji = "emoji/bad1.jpg"
-        elif predicted_class == '긍정':
-            temp_diary.color = 'EF9F9F'
-            temp_diary.emoji = "emoji/good1.jpg"
-        else:
-            temp_diary.color = 'FFE3A9'
-            temp_diary.emoji = "emoji/neutral.jpg"
+        temp_diary.neutral = np.round(pred[0][1], 2)
+        temp_diary.positive = np.round(pred[0][2], 2)
+        temp_diary.color = color
+        temp_diary.emoji = emoji
+
         temp_diary.save()
 
         return super().form_valid(form)

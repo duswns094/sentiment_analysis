@@ -73,7 +73,6 @@
         {% for diary in diary_list %}
           {
              real_date: "{{ diary.real_date|date:'Y-m-d' }}",
-             content: "{{ diary.content }}",
              color: "{{ diary.color }}",
              emoji: "{{ diary.emoji.url }}",
           },
@@ -125,7 +124,9 @@
 
         if(new Date(diaries[j]['real_date']).getDate() == date
           && new Date(diaries[j]['real_date']).getFullYear() == viewYear
-          && new Date(diaries[j]['real_date']).getMonth() == (viewMonth)){
+          && new Date(diaries[j]['real_date']).getMonth() == (viewMonth)
+          && i<= lastDateIndex
+          && i>= firstDateIndex){
           color = diaries[j]['color'] ;
           emoji = '<div style="text-align:center; display:absoulte; height:0;"><img src="'+diaries[j]['emoji']+'"style ="width:3rem;"></div>'
           console.log(color);
