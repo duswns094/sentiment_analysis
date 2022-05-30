@@ -33,8 +33,8 @@ def bert_predict(sentence):
 
 def image_predict(image):
     model = settings.MODEL_IMAGE
-    img_height = 250
-    img_width = 250
+    img_height = 300
+    img_width = 300
     image_resize = image.resize((img_height,img_width))
     img_array = np.array(image_resize)
     img_array = img_array.reshape(1,img_height,img_width,3)
@@ -56,15 +56,15 @@ def weighted_sum(text_pred, image_pred):
     # 가중치
     high_wv = 0.8
     low_wv = 0.2
-    mid_wv = 0.5
+
     # 이미지 분류 결과 긍정 혹은 부정이 0.9 이상인 경우 이미지 예측 결과에 높은 가중치 적용(중립 제외)
     if image_result[0][0] >= 0.9 or image_result[0][2] >= 0.9:
         weighted_image = image_result * high_wv
         weighted_text = text_result * low_wv
         weighted_result = weighted_image + weighted_text
     else:
-        weighted_image = image_result * mid_wv
-        weighted_text = text_result * mid_wv
+        weighted_image = image_result * low_wv
+        weighted_text = text_result * high_wv
         weighted_result = weighted_image + weighted_text
     print("최종 결과[부정,중립,긍정]:", weighted_result)
     return weighted_result

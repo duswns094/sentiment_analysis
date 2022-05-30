@@ -2,8 +2,7 @@
 secrets.json
 
 # BERT Model
-models/best_kobert_weights.h5
-models/model.h5
+models/
 # Created by https://www.toptal.com/developers/gitignore/api/windows,pycharm,django
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,pycharm,django
 

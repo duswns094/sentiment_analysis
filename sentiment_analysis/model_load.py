@@ -47,13 +47,13 @@ def create_bert_model(max_length=128):
                   metrics=[metrics.SparseCategoricalAccuracy()])
 
     # 저장된 parameter를 loading
-    model.load_weights(filepath='./models/best_kobert_weights.h5')
+    model.load_weights(filepath='./models/best_kobert_weights(with_domain).h5')
 
     return model
 
 
 def create_image_model():
 
-    model = tf.keras.models.load_model('./models/model.h5')
+    model = tf.keras.models.load_model('./models/ep5_aug.h5')
 
     return model
